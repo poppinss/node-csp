@@ -1,0 +1,29 @@
+{
+  "name": "node-csp",
+  "version": "1.0.0",
+  "description": "I/O module to add csp headers to http response",
+  "main": "index.js",
+  "directories": {},
+  "scripts": {
+    "test": "_mocha test/ --bail",
+    "coverage": "istanbul cover _mocha test/"
+  },
+  "keywords": [
+    "csp"
+  ],
+  "author": "amanvirk",
+  "license": "MIT",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "co-mocha": "^1.1.2",
+    "coveralls": "^2.11.6",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0",
+    "standard": "^5.4.1",
+    "supertest": "^1.1.0"
+  },
+  "dependencies": {
+    "platform": "^1.3.1"
+  }
+}
