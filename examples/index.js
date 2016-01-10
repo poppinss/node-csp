@@ -12,8 +12,8 @@ const fs = require('fs')
 
 const options = {
   directives: {
-    'default-src': ['self'],
-    'script-src': ['self', 'cdnjs.cloudflare.com', '@nonce']
+    defaultSrc: ['self'],
+    scriptSrc: ['self', 'cdnjs.cloudflare.com', '@nonce']
   },
   nonce: '614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
 }

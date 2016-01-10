@@ -18,6 +18,7 @@ let Csp = exports = module.exports = {}
  * @type {RegExp}
  */
 const keywords = /(none|self|unsafe-inline|unsafe-eval)/g
+const caseRegex = /[a-z][A-Z]/g
 
 /**
  * @description list of allowed directives by all browsers
@@ -82,7 +83,7 @@ Csp.build = function (request, options) {
     return {}
   }
 
-  const cspString = Csp._quoteKeywords(Csp._formatDirectives(options.directives)).replace('@nonce', `'nonce-${(options.nonce || '')}'`)
+  const cspString = Csp._quoteKeywords(Csp._makeDirectives(options.directives)).replace('@nonce', `'nonce-${(options.nonce || '')}'`)
 
   if(cspString.trim().length <= 0) {
     return {}
@@ -100,18 +101,19 @@ Csp.build = function (request, options) {
 }
 
 /**
- * @description format directives objects to a string
+ * @description makes directives objects to a string
  * to be consumed by web browsers.
- * @method _formatDirectives
+ * @method _makeDirectives
  * @param  {Object}          directives
  * @return {String}
  * @public
  */
-Csp._formatDirectives = function (directives) {
+Csp._makeDirectives = function (directives) {
   const directiveNames = Object.keys(directives)
   let cspString = ''
   directiveNames.forEach(function (name) {
     const directive = directives[name]
+    name = Csp._formatDirectiveName(name)
     if(directivesList.indexOf(name) <= -1) {
       throw new Error(`invalid directive: ${name}`)
     }
@@ -131,5 +133,18 @@ Csp._formatDirectives = function (directives) {
 Csp._quoteKeywords = function (cspString) {
   return cspString.replace(keywords, function (index, group) {
     return `'${group}'`
+  })
+}
+
+/**
+ * @description formats a name from camelcase to dashcase
+ * @method _formatDirectiveName
+ * @param  {String}             key
+ * @return {String}
+ * @public
+ */
+Csp._formatDirectiveName = function (key) {
+  return key.replace(caseRegex, function (str) {
+    return `${str[0]}-${str[1].toLowerCase()}`
   })
 }

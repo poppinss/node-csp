@@ -18,11 +18,18 @@ const latestChrome = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, li
 const unknownBrowser = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) G-Bot/27.0.1453.93 KBot/537.36'
 
 describe('Csp', function () {
+
+  it('should format directive key name from camelcase to dash-case', function () {
+    const key = 'defaultSrc'
+    const formattedKey = Csp._formatDirectiveName(key)
+    expect(formattedKey).to.equal('default-src')
+  })
+
   it('should convert valid directives to a response header friendly string', function () {
     const directives = {
-      'base-uri': ['self']
+      baseUri: ['self']
     }
-    const cspString = Csp._formatDirectives(directives)
+    const cspString = Csp._makeDirectives(directives)
     expect(cspString).to.equal("base-uri self; ")
   })
 
@@ -31,34 +38,34 @@ describe('Csp', function () {
       'foo-bar': ['self']
     }
     const cspString = function () {
-      return Csp._formatDirectives(directives)
+      return Csp._makeDirectives(directives)
     }
     expect(cspString).to.throw("invalid directive: foo-bar")
   })
 
   it('should add quotation marks for csp keywords', function () {
     const directives = {
-      'base-uri': ['self']
+      baseUri: ['self']
     }
-    const cspString = Csp._formatDirectives(directives)
+    const cspString = Csp._makeDirectives(directives)
     const quotedString = Csp._quoteKeywords(cspString)
     expect(quotedString).to.equal("base-uri 'self'; ")
   })
 
   it('should not add quotation marks when there are no csp keywords', function () {
     const directives = {
-      'base-uri': ['*.example.com']
+      baseUri: ['*.example.com']
     }
-    const cspString = Csp._formatDirectives(directives)
+    const cspString = Csp._makeDirectives(directives)
     const quotedString = Csp._quoteKeywords(cspString)
     expect(quotedString).to.equal("base-uri *.example.com; ")
   })
 
   it('should add quotation marks to unsafe-eval', function () {
     const directives = {
-      'script-src': ['unsafe-eval']
+      scriptSrc: ['unsafe-eval']
     }
-    const cspString = Csp._formatDirectives(directives)
+    const cspString = Csp._makeDirectives(directives)
     const quotedString = Csp._quoteKeywords(cspString)
     expect(quotedString).to.equal("script-src 'unsafe-eval'; ")
   })
@@ -70,7 +77,7 @@ describe('Csp', function () {
 
   it('should return proper headers when browser is latest chrome', function () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const cspHeaders = Csp.build({headers:{'user-agent': latestChrome}}, {directives})
     expect(cspHeaders).deep.equal({'Content-Security-Policy': "default-src 'self' js.example.com; "})
@@ -83,7 +90,7 @@ describe('Csp', function () {
 
   it('should set report only headers when report only is true', function () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const cspHeaders = Csp.build({headers:{'user-agent': latestChrome}}, {directives, reportOnly: true})
     expect(cspHeaders).deep.equal({'Content-Security-Policy-Report-Only': "default-src 'self' js.example.com; "})
@@ -91,7 +98,7 @@ describe('Csp', function () {
 
   it('should return all headers when browser is unknown', function () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const cspHeaders = Csp.build({headers:{'user-agent': unknownBrowser}}, {directives})
     expect(cspHeaders).to.have.property('Content-Security-Policy')
@@ -101,7 +108,7 @@ describe('Csp', function () {
 
   it('should return all headers when there is no user agent', function () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const cspHeaders = Csp.build({headers:{}}, {directives})
     expect(cspHeaders).to.have.property('Content-Security-Policy')
@@ -111,7 +118,7 @@ describe('Csp', function () {
 
   it('should add all csp header to http response', function * () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const request = http.createServer(function (req, res) {
       const cspHeaders = Csp.add(req, res, {directives})
@@ -126,7 +133,7 @@ describe('Csp', function () {
 
   it('should add chrome only csp header to http response when user agent is set', function * () {
     const directives = {
-      'default-src': ['self', 'js.example.com']
+      defaultSrc: ['self', 'js.example.com']
     }
     const request = http.createServer(function (req, res) {
       const cspHeaders = Csp.add(req, res, {directives})
