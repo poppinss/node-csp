@@ -13,7 +13,7 @@
     "coverage": "istanbul cover _mocha test/"
   },
   "keywords": [
-    "csp"
+    "csp","security headers"
   ],
   "author": "amanvirk",
   "license": "MIT",
