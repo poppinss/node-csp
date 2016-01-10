@@ -27,9 +27,9 @@ const cspHeaders = [
  */
 headers.IE = function (browser) {
   const version = parseFloat(browser.version)
-  if(version < 12 & version > 9) {
+  if (version < 12 & version > 9) {
     return ['X-Content-Security-Policy']
-  } else if(version > 12) {
+  } else if (version > 12) {
     return ['Content-Security-Policy']
   } else {
     return []
@@ -47,7 +47,7 @@ headers.Firefox = function (browser) {
   const version = parseFloat(browser.version)
   if (version >= 23) {
     return ['Content-Security-Policy']
-  } else if (version >=4 && version < 23) {
+  } else if (version >= 4 && version < 23) {
     return ['X-Content-Security-Policy']
   } else {
     return []

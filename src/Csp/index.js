@@ -54,7 +54,7 @@ const directivesList = [
 Csp.add = function (request, response, options) {
   const cspHeaders = Csp.build(request, options)
   const headerKeys = Object.keys(cspHeaders)
-  if(headerKeys.length) {
+  if (headerKeys.length) {
     headerKeys.forEach(function (key) {
       response.setHeader(key, cspHeaders[key])
     })
@@ -74,24 +74,24 @@ Csp.build = function (request, options) {
   const userAgent = request.headers['user-agent']
   let cspHeaders = headers.getAllHeaders()
 
-  if(userAgent && !options.setAllHeaders) {
+  if (userAgent && !options.setAllHeaders) {
     const browser = platform.parse(userAgent) || {}
-    cspHeaders = typeof(headers[browser.name]) === 'function' ? headers[browser.name](browser, options) : headers.getAllHeaders()
+    cspHeaders = typeof (headers[browser.name]) === 'function' ? headers[browser.name](browser, options) : headers.getAllHeaders()
   }
 
-  if(!cspHeaders.length) {
+  if (!cspHeaders.length) {
     return {}
   }
 
   const cspString = Csp._quoteKeywords(Csp._makeDirectives(options.directives)).replace('@nonce', `'nonce-${(options.nonce || '')}'`)
 
-  if(cspString.trim().length <= 0) {
+  if (cspString.trim().length <= 0) {
     return {}
   }
 
   let cspBuildHeaders = {}
   cspHeaders.forEach(function (headerKey) {
-    if(options.reportOnly) {
+    if (options.reportOnly) {
       headerKey += '-Report-Only'
     }
     cspBuildHeaders[headerKey] = cspString
@@ -114,7 +114,7 @@ Csp._makeDirectives = function (directives) {
   directiveNames.forEach(function (name) {
     const directive = directives[name]
     name = Csp._formatDirectiveName(name)
-    if(directivesList.indexOf(name) <= -1) {
+    if (directivesList.indexOf(name) <= -1) {
       throw new Error(`invalid directive: ${name}`)
     }
     cspString += `${name} ${directive.join(' ')}; `
