@@ -82,7 +82,7 @@ Csp.build = function (request, options) {
     return {}
   }
 
-  const cspString = Csp._quoteKeywords(Csp._formatDirectives(options.directives))
+  const cspString = Csp._quoteKeywords(Csp._formatDirectives(options.directives)).replace('@nonce', `'nonce-${(options.nonce || '')}'`)
 
   if(cspString.trim().length <= 0) {
     return {}
