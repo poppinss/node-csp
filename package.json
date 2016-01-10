@@ -1,6 +1,6 @@
 {
   "name": "node-csp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "I/O module to add cross browser csp headers to http response",
   "main": "index.js",
   "directories": {
